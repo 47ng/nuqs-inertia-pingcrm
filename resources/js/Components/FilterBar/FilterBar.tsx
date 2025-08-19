@@ -1,60 +1,21 @@
-import { useState, useEffect } from 'react';
-import { usePage, router } from '@inertiajs/react';
-import { usePrevious } from 'react-use';
-import SelectInput from '@/Components/Form/SelectInput';
-import pickBy from 'lodash/pickBy';
-import { ChevronDown } from 'lucide-react';
 import FieldGroup from '@/Components/Form/FieldGroup';
+import SelectInput from '@/Components/Form/SelectInput';
 import TextInput from '@/Components/Form/TextInput';
+import { ChevronDown } from 'lucide-react';
+import { debounce, parseAsString, useQueryStates } from 'nuqs';
+import { useState } from 'react';
+
+const searchParams = {
+  search: parseAsString.withDefault(''),
+  role: parseAsString.withDefault(''),
+  trashed: parseAsString.withDefault('')
+};
 
 export default function FilterBar() {
-  const { filters } = usePage<{
-    filters: { role?: string; search?: string; trashed?: string };
-  }>().props;
-
   const [opened, setOpened] = useState(false);
-
-  const [values, setValues] = useState({
-    role: filters.role || '', // role is used only on users page
-    search: filters.search || '',
-    trashed: filters.trashed || ''
+  const [{ role, search, trashed }, setFilters] = useQueryStates(searchParams, {
+    shallow: false
   });
-
-  const prevValues = usePrevious(values);
-
-  function reset() {
-    setValues({
-      role: '',
-      search: '',
-      trashed: ''
-    });
-  }
-
-  useEffect(() => {
-    // https://reactjs.org/docs/hooks-faq.html#how-to-get-the-previous-props-or-state
-    if (prevValues) {
-      const query = Object.keys(pickBy(values)).length ? pickBy(values) : {};
-
-      router.get(route(route().current() as string), query, {
-        replace: true,
-        preserveState: true
-      });
-    }
-  }, [values]);
-
-  function handleChange(
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) {
-    const name = e.target.name;
-    const value = e.target.value;
-
-    setValues(values => ({
-      ...values,
-      [name]: value
-    }));
-
-    if (opened) setOpened(false);
-  }
 
   return (
     <div className="flex items-center w-full max-w-md mr-4">
@@ -68,12 +29,16 @@ export default function FilterBar() {
             className="fixed inset-0 z-20 bg-black opacity-25"
           />
           <div className="relative z-30 w-64 px-4 py-6 mt-2 bg-white rounded shadow-lg space-y-4">
-            {filters.hasOwnProperty('role') && (
+            {Boolean(role) && (
               <FieldGroup label="Role" name="role">
                 <SelectInput
                   name="role"
-                  value={values.role}
-                  onChange={handleChange}
+                  value={role}
+                  onChange={e =>
+                    setFilters({ role: e.target.value }).then(() =>
+                      setOpened(false)
+                    )
+                  }
                   options={[
                     { value: '', label: '' },
                     { value: 'user', label: 'User' },
@@ -85,8 +50,12 @@ export default function FilterBar() {
             <FieldGroup label="Trashed" name="trashed">
               <SelectInput
                 name="trashed"
-                value={values.trashed}
-                onChange={handleChange}
+                value={trashed}
+                onChange={e =>
+                  setFilters({ trashed: e.target.value }).then(() =>
+                    setOpened(false)
+                  )
+                }
                 options={[
                   { value: '', label: '' },
                   { value: 'with', label: 'With Trashed' },
@@ -109,13 +78,21 @@ export default function FilterBar() {
           name="search"
           placeholder="Search…"
           autoComplete="off"
-          value={values.search}
-          onChange={handleChange}
+          value={search}
+          onChange={e =>
+            setFilters(
+              { search: e.target.value },
+              {
+                limitUrlUpdates:
+                  e.target.value === '' ? undefined : debounce(250)
+              }
+            )
+          }
           className="border-0 rounded-l-none focus:ring-2"
         />
       </div>
       <button
-        onClick={reset}
+        onClick={() => setFilters(null)}
         className="ml-3 text-sm text-gray-600 hover:text-gray-700 focus:text-indigo-700 focus:outline-none"
         type="button"
       >
