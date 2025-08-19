@@ -2,7 +2,7 @@ import BottomHeader from '@/Components/Header/BottomHeader';
 import TopHeader from '@/Components/Header/TopHeader';
 import MainMenu from '@/Components/Menu/MainMenu';
 import FlashMessages from '@/Components/Messages/FlashMessages';
-import { NuqsAdapter } from '@/nuqs-inertia-adapter';
+import { NuqsAdapter } from '@/lib/nuqs-inertia-adapter';
 import { Head } from '@inertiajs/react';
 
 interface MainLayoutProps {
