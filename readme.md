@@ -1,8 +1,8 @@
-# Ping CRM React
+# Ping CRM React + nuqs
 
-A demo application to illustrate how [Inertia.js](https://inertiajs.com/) works with [Laravel](https://laravel.com/) and [React](https://reactjs.org/).
+A demo application to illustrate how [Inertia.js](https://inertiajs.com/) works with [Laravel](https://laravel.com/), [React](https://reactjs.org/), and [nuqs](https://nuqs.47ng.com) to manage filters.
 
-> This is a port of the original [Ping CRM](https://github.com/inertiajs/pingcrm) written in Laravel and Vue.
+> This is a fork of the [Ping CRM React](https://github.com/liorocks/pingcrm-react) which is itself a port of the original [Ping CRM](https://github.com/inertiajs/pingcrm) written in Laravel and Vue.
 
 ![](https://raw.githubusercontent.com/liorocks/pingcrm-react/master/screenshot.png)
 
@@ -87,3 +87,4 @@ php artisan test
 - Original work by Jonathan Reinink (@reinink) and contributors
 - Port to Ruby on Rails by Georg Ledermann (@ledermann)
 - Port to React by Lio (@liorocks)
+- Added nuqs by François Best (@franky47)
