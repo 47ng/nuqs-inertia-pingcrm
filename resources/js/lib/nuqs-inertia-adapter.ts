@@ -9,18 +9,24 @@ import {
 import * as React from 'react';
 import { useEffect } from 'react';
 
+function getSearchParams(url: string) {
+  if (url.startsWith('/')) {
+    url = `${location.origin}${url}`;
+  }
+
+  return new URL(url).searchParams;
+}
+
 function useNuqsInertiaAdapter(): AdapterInterface {
-  const currentUrl = usePage().url;
+  const { url } = usePage();
   // We need the searchParams to be optimistic to avoid
   // flickering when the internal state is updated
   // but the URL is not yet updated.
-  const [searchParams, setSearchParams] = React.useState(
-    new URL(`${location.origin}${currentUrl}`).searchParams
-  );
+  const [searchParams, setSearchParams] = React.useState(getSearchParams(url));
 
   useEffect(() => {
-    setSearchParams(new URL(`${location.origin}${currentUrl}`).searchParams);
-  }, [currentUrl]);
+    setSearchParams(getSearchParams(url));
+  }, [url]);
 
   const updateUrl: UpdateUrlFunction = React.useCallback(
     (search: URLSearchParams, options: AdapterOptions) => {
