@@ -7,7 +7,6 @@ import {
   type unstable_UpdateUrlFunction as UpdateUrlFunction
 } from 'nuqs/adapters/custom';
 import * as React from 'react';
-import { useEffect } from 'react';
 
 function useNuqsInertiaAdapter(): AdapterInterface {
   const currentUrl = usePage().url;
@@ -18,7 +17,7 @@ function useNuqsInertiaAdapter(): AdapterInterface {
     new URL(currentUrl, location.origin).searchParams
   );
 
-  useEffect(() => {
+  React.useEffect(() => {
     setSearchParams(new URL(currentUrl, location.origin).searchParams);
   }, [currentUrl]);
 
