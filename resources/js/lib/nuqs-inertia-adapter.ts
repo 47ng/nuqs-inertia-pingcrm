@@ -15,11 +15,11 @@ function useNuqsInertiaAdapter(): AdapterInterface {
   // flickering when the internal state is updated
   // but the URL is not yet updated.
   const [searchParams, setSearchParams] = React.useState(
-    new URL(`${location.origin}${currentUrl}`).searchParams
+    new URL(currentUrl, location.origin).searchParams
   );
 
   useEffect(() => {
-    setSearchParams(new URL(`${location.origin}${currentUrl}`).searchParams);
+    setSearchParams(new URL(currentUrl, location.origin).searchParams);
   }, [currentUrl]);
 
   const updateUrl: UpdateUrlFunction = React.useCallback(
@@ -42,7 +42,7 @@ function useNuqsInertiaAdapter(): AdapterInterface {
       const method = options.history === 'replace' ? 'replace' : 'push';
 
       router[method]({
-        url: url.toString(),
+        url: url.pathname + url.search + url.hash,
         clearHistory: false,
         encryptHistory: false,
         preserveScroll: !options.scroll,
