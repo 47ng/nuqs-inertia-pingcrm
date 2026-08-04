@@ -8,17 +8,20 @@ import {
 } from 'nuqs/adapters/custom';
 import * as React from 'react';
 
+const getOrigin = () =>
+  typeof window !== 'undefined' ? window.location.origin : 'http://localhost';
+
 function useNuqsInertiaAdapter(): AdapterInterface {
   const currentUrl = usePage().url;
   // We need the searchParams to be optimistic to avoid
   // flickering when the internal state is updated
   // but the URL is not yet updated.
   const [searchParams, setSearchParams] = React.useState(
-    new URL(currentUrl, location.origin).searchParams
+    new URL(currentUrl, getOrigin()).searchParams
   );
 
   React.useEffect(() => {
-    setSearchParams(new URL(currentUrl, location.origin).searchParams);
+    setSearchParams(new URL(currentUrl, getOrigin()).searchParams);
   }, [currentUrl]);
 
   const updateUrl: UpdateUrlFunction = React.useCallback(
